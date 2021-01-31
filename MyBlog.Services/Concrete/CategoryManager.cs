@@ -33,7 +33,7 @@ namespace MyBlog.Services.Concrete
                     ResultStatus = ResultStatus.Success
                 }); ;
             }
-            return new DataResult<CategoryDto>(ResultStatus.Error, null, "There is no such category.");
+            return new DataResult<CategoryDto>(ResultStatus.Error, "There is no such category.", null);
         }
 
         public async Task<IDataResult<CategoryListDto>> GetAll()
@@ -47,7 +47,12 @@ namespace MyBlog.Services.Concrete
                     ResultStatus = ResultStatus.Success
                 });
             }
-            return new DataResult<CategoryListDto>(ResultStatus.Error, null, "There is no category exists.");
+            return new DataResult<CategoryListDto>(ResultStatus.Error, "There is no category exists.", new CategoryListDto 
+            {
+                Categories=null,
+                ResultStatus=ResultStatus.Error,
+                Message= "There is no category exists."
+            });
         }
 
         public async Task<IDataResult<CategoryListDto>> GetAllByNonDeleted()
@@ -61,7 +66,7 @@ namespace MyBlog.Services.Concrete
                     ResultStatus = ResultStatus.Success
                 });
             }
-            return new DataResult<CategoryListDto>(ResultStatus.Error, null, "There is no category exists.");
+            return new DataResult<CategoryListDto>(ResultStatus.Error, "There is no category exists.", null);
         }
 
         public async Task<IResult> Add(CategoryAddDto categoryAddDto, string createdByName)
@@ -69,7 +74,8 @@ namespace MyBlog.Services.Concrete
             var category = _mapper.Map<Category>(categoryAddDto);
             category.CreatedByName = createdByName;
             category.ModifiedByName = createdByName;
-            await _unitOfWork.Categories.AddAsync(category).ContinueWith(t => _unitOfWork.SaveAsync()); // SaveAsync methodunu zincirliyoruz.
+            await _unitOfWork.Categories.AddAsync(category);
+            await _unitOfWork.SaveAsync();
             return new Result(ResultStatus.Success, $"{categoryAddDto.Name} category is successfully added.");
         }
 
@@ -78,7 +84,8 @@ namespace MyBlog.Services.Concrete
             var category = _mapper.Map<Category>(categoryUpdateDto);
             category.ModifiedByName = modifiedByName;
             category.ModifiedDate = DateTime.Now;
-            await _unitOfWork.Categories.UpdateAsync(category).ContinueWith(t => _unitOfWork.SaveAsync());
+            await _unitOfWork.Categories.UpdateAsync(category);
+            await _unitOfWork.SaveAsync();
             return new Result(ResultStatus.Success, $"{categoryUpdateDto.Name} category successfully updated.");
         }
 
@@ -90,7 +97,8 @@ namespace MyBlog.Services.Concrete
                 category.IsDeleted = true;
                 category.ModifiedByName = modifiedByName;
                 category.ModifiedDate = DateTime.Now;
-                await _unitOfWork.Categories.UpdateAsync(category).ContinueWith(t => _unitOfWork.SaveAsync());
+                await _unitOfWork.Categories.UpdateAsync(category);
+                await _unitOfWork.SaveAsync();
                 return new Result(ResultStatus.Success, $"{category.Name} category successfully deleted.");
             }
             return new Result(ResultStatus.Error, "There is no such category.");
@@ -101,7 +109,8 @@ namespace MyBlog.Services.Concrete
             var category = await _unitOfWork.Categories.GetAsync(c => c.Id == categoryId);
             if (category != null)
             {
-                await _unitOfWork.Categories.DeleteAsync(category).ContinueWith(t => _unitOfWork.SaveAsync());
+                await _unitOfWork.Categories.DeleteAsync(category);
+                await _unitOfWork.SaveAsync();
                 return new Result(ResultStatus.Success, $"Warning ! {category.Name} category successfully deleted from database.");
             }
             return new Result(ResultStatus.Error, "There is no such category.");
@@ -118,7 +127,7 @@ namespace MyBlog.Services.Concrete
                     ResultStatus = ResultStatus.Success
                 });
             }
-            return new DataResult<CategoryListDto>(ResultStatus.Error, null, "There is no category exists.");
+            return new DataResult<CategoryListDto>(ResultStatus.Error, "There is no category exists.", null);
         }
     }
 }

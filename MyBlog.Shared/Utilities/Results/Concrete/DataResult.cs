@@ -12,14 +12,14 @@ namespace MyBlog.Shared.Utilities.Results.Concrete
             Data = data;
         }
 
-        public DataResult(ResultStatus resultStatus, T data, string message)
+        public DataResult(ResultStatus resultStatus, string message, T data)
         {
             ResultStatus = resultStatus;
             Data = data;
             Message = message;
         }
 
-        public DataResult(ResultStatus resultStatus, T data, string message, Exception exception)
+        public DataResult(ResultStatus resultStatus, string message, Exception exception, T data)
         {
             ResultStatus = resultStatus;
             Data = data;

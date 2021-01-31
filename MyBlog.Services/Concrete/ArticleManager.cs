@@ -28,7 +28,8 @@ namespace MyBlog.Services.Concrete
             article.CreatedByName = createdByName;
             article.ModifiedByName = createdByName;
             article.UserId = 1; // (#Refactor) Session işlemlerinde burayı düzelteceğim.
-            await _unitOfWork.Articles.AddAsync(article).ContinueWith(task => _unitOfWork.SaveAsync());
+            await _unitOfWork.Articles.AddAsync(article);
+            await _unitOfWork.SaveAsync();
             return new Result(ResultStatus.Success, $"{articleAddDto.Title} Article successfully added.");
         }
 
@@ -41,7 +42,8 @@ namespace MyBlog.Services.Concrete
                 article.IsDeleted = true;
                 article.ModifiedByName = modifiedByName;
                 article.ModifiedDate = DateTime.Now;
-                await _unitOfWork.Articles.UpdateAsync(article).ContinueWith(task => _unitOfWork.SaveAsync());
+                await _unitOfWork.Articles.UpdateAsync(article);
+                await _unitOfWork.SaveAsync();
                 return new Result(ResultStatus.Success, $"{article.Title} Article successfully deleted.");
             }
             return new Result(ResultStatus.Error, "There is no such article.");
@@ -58,7 +60,7 @@ namespace MyBlog.Services.Concrete
                     ResultStatus = ResultStatus.Success
                 });
             }
-            return new DataResult<ArticleDto>(ResultStatus.Error, null, "Article not found");
+            return new DataResult<ArticleDto>(ResultStatus.Error, "Article not found", null);
         }
 
         public async Task<IDataResult<ArticleListDto>> GetAll()
@@ -72,7 +74,7 @@ namespace MyBlog.Services.Concrete
                     ResultStatus = ResultStatus.Success
                 });
             }
-            return new DataResult<ArticleListDto>(ResultStatus.Error, null, "Article not found");
+            return new DataResult<ArticleListDto>(ResultStatus.Error, "Article not found", null);
         }
 
         public async Task<IDataResult<ArticleListDto>> GetAllByCategory(int categoryId)
@@ -89,9 +91,9 @@ namespace MyBlog.Services.Concrete
                         ResultStatus = ResultStatus.Success
                     });
                 }
-                return new DataResult<ArticleListDto>(ResultStatus.Error, null, "Article not found");
+                return new DataResult<ArticleListDto>(ResultStatus.Error, "Article not found", null);
             }
-            return new DataResult<ArticleListDto>(ResultStatus.Error, null, "There is no such Category");
+            return new DataResult<ArticleListDto>(ResultStatus.Error, "There is no such Category", null);
         }
 
         public async Task<IDataResult<ArticleListDto>> GetAllByNonDeleted()
@@ -105,7 +107,7 @@ namespace MyBlog.Services.Concrete
                     ResultStatus = ResultStatus.Success
                 });
             }
-            return new DataResult<ArticleListDto>(ResultStatus.Error, null, "Article not found");
+            return new DataResult<ArticleListDto>(ResultStatus.Error, "Article not found", null);
         }
 
         public async Task<IDataResult<ArticleListDto>> GetAllByNonDeletedAndActive()
@@ -119,7 +121,7 @@ namespace MyBlog.Services.Concrete
                     ResultStatus = ResultStatus.Success
                 });
             }
-            return new DataResult<ArticleListDto>(ResultStatus.Error, null, "Article not found");
+            return new DataResult<ArticleListDto>(ResultStatus.Error, "Article not found", null);
         }
 
         public async Task<IResult> HardDelete(int articleId)
@@ -128,7 +130,8 @@ namespace MyBlog.Services.Concrete
             if (result)
             {
                 var article = await _unitOfWork.Articles.GetAsync(a => a.Id == articleId);
-                await _unitOfWork.Articles.DeleteAsync(article).ContinueWith(task => _unitOfWork.SaveAsync());
+                await _unitOfWork.Articles.DeleteAsync(article);
+                await _unitOfWork.SaveAsync();
                 return new Result(ResultStatus.Success, $"Warning ! {article.Title} Article successfully deleted from database.");
             }
             return new Result(ResultStatus.Error, "There is no such article.");
@@ -138,7 +141,8 @@ namespace MyBlog.Services.Concrete
         {
             var article = _mapper.Map<Article>(articleUpdateDto);
             article.ModifiedByName = modifiedByName;
-            await _unitOfWork.Articles.UpdateAsync(article).ContinueWith(task => _unitOfWork.SaveAsync());
+            await _unitOfWork.Articles.UpdateAsync(article);
+            await _unitOfWork.SaveAsync();
             return new Result(ResultStatus.Success, $"{articleUpdateDto.Title} Article successfully updated.");
         }
     }

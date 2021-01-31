@@ -48,11 +48,12 @@ namespace MyBlog.Shared.Data.Concrete.EntityFramework
 
             if (includeProperties.Any())
             {
-                foreach (var inclueProperty in includeProperties)
+                foreach (var includeProperty in includeProperties)
                 {
-                    query = query.Include(inclueProperty);
+                    query = query.Include(includeProperty);
                 }
             }
+
             return await query.ToListAsync();
         }
 
