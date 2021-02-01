@@ -14,7 +14,8 @@ namespace MyBlog.Data.Concrete.EntityFramework.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseNpgsql(connectionString: "insert connection string here");
+            //optionsBuilder.UseNpgsql(connectionString: "insert connection string here2");
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

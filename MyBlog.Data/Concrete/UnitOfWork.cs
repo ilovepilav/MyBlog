@@ -23,6 +23,7 @@ namespace MyBlog.Data.Concrete
         public ICategoryRepository Categories => _categoryRepository ?? new EfCategoryRepository(_context);
         public ICommentRepository Comments => _commentRepository ?? new EfCommentRepository(_context);
         public IUserRepository Users => _userRepository ?? new EfUserRepository(_context);
+        public IRoleRepository Roles => _roleRepository ?? new EfRoleRepository(_context);
 
         public async ValueTask DisposeAsync()
         {
